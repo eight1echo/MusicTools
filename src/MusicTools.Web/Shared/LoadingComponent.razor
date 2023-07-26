@@ -1,0 +1,23 @@
+﻿@inject IDialogService DialogService
+
+@code {
+    private IDialogReference? Dialog { get; set; }
+
+    public void BeginLoading(string loadingTitle, string loadingText = "")
+    {
+        var options = new DialogOptions { DisableBackdropClick = true, MaxWidth = MaxWidth.ExtraSmall, FullWidth = true };
+        var parameters = new DialogParameters();
+
+        parameters.Add("ContentText", loadingText);
+
+        Dialog = DialogService.Show<LoadingSpinner>(loadingTitle, parameters, options);
+    }
+
+    public void LoadingComplete()
+    {
+        if (Dialog is not null)
+        {
+            Dialog.Close();
+        }        
+    }
+}
