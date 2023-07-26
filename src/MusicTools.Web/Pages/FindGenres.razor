@@ -1,0 +1,46 @@
+﻿@page "/find-genres"
+@inherits LoadingComponent
+@inject IFindGenres _findGenres
+
+<MudContainer Class="mt-5" MaxWidth="MaxWidth.Small">
+    <MudGrid>
+
+        <MudItem xs="7">
+            <MudTextField @bind-Value="@Query.Artist" Placeholder="Artist" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="2" Class="d-flex align-center">
+            <MudButton OnClick="GenreQuery" Color="Color.Info" Variant="Variant.Outlined">Search</MudButton>
+        </MudItem>
+
+    </MudGrid>      
+</MudContainer>
+
+<MudContainer Class="mt-5" MaxWidth="MaxWidth.Medium">
+
+    @if (QueryResults.Any())
+    {
+        <MudText>Results:</MudText>
+
+        @foreach (var genre in QueryResults)
+        {
+            @if (genre != "seen live")
+            {
+                <MudChip>@genre</MudChip>
+            }            
+        }
+    }
+
+</MudContainer>
+
+@code {
+    public Query Query { get; set; } = new Query();
+    public List<string> QueryResults { get; set; } = new List<string>();
+
+    private async Task GenreQuery()
+    {
+        QueryResults.Clear();
+        BeginLoading("Finding Genres..");
+        QueryResults = await _findGenres.SendGenreQuery(Query);
+        LoadingComplete();
+    }
+}

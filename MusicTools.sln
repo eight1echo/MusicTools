@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicTools", "src\MusicTools\MusicTools.csproj", "{B132728F-0752-41B9-9624-B350C978F578}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicTools.Infrastructure", "src\MusicTools.Infrastructure\MusicTools.Infrastructure.csproj", "{3601C5A4-ECDD-441C-9DCA-684AAB8CA930}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicTools.Web", "src\MusicTools.Web\MusicTools.Web.csproj", "{64A1AB97-5568-405A-B347-D93C3BAA3423}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B132728F-0752-41B9-9624-B350C978F578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B132728F-0752-41B9-9624-B350C978F578}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B132728F-0752-41B9-9624-B350C978F578}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B132728F-0752-41B9-9624-B350C978F578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3601C5A4-ECDD-441C-9DCA-684AAB8CA930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3601C5A4-ECDD-441C-9DCA-684AAB8CA930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3601C5A4-ECDD-441C-9DCA-684AAB8CA930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3601C5A4-ECDD-441C-9DCA-684AAB8CA930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64A1AB97-5568-405A-B347-D93C3BAA3423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64A1AB97-5568-405A-B347-D93C3BAA3423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64A1AB97-5568-405A-B347-D93C3BAA3423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64A1AB97-5568-405A-B347-D93C3BAA3423}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

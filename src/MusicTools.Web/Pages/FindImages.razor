@@ -1,0 +1,134 @@
+﻿@page "/find-images"
+
+@inherits LoadingComponent
+
+@inject IJSRuntime _jsInterop
+@inject IFindImages _findImages
+
+<MudContainer Class="mt-5" MaxWidth="MaxWidth.Medium">
+    <MudGrid>
+
+        <MudItem xs="4">
+            <MudTextField @bind-Value="@Query.Artist" Placeholder="Artist" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="3">
+            <MudTextField @bind-Value="@Query.Title" Placeholder="Title" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="3">
+            <MudTextField @bind-Value="@Query.UPC" Placeholder="UPC" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="1" Class="d-flex align-center">
+            <MudButton OnClick="ImageQuery" Color="Color.Info" Variant="Variant.Outlined">Search</MudButton>
+        </MudItem>
+        @if (querySent)
+        {
+            <MudItem xs="1" Class="d-flex align-center">
+                <MudButton OnClick="ResetQuery" Color="Color.Error" Variant="Variant.Outlined">Reset</MudButton>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@if (ImageResults.Any())
+{
+    <MudContainer Class="mt-5" MaxWidth="MaxWidth.ExtraLarge">
+
+        <MudGrid>
+            <MudItem xs="6">
+                <MudText Class="d-flex justify-center" Typo="Typo.h6">Images Found: @ImageResults.Count</MudText>
+                <MudText Class="d-flex justify-center">@(imagesPrevious + 1) - @(imagesPrevious + imagesCurrent)</MudText>
+            </MudItem>
+            <MudSpacer />
+            <MudItem xs="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(imagesPrevious <= 0)" OnClick="PreviousPage">Previous Page</MudButton>
+            </MudItem>
+            <MudItem xs="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(imagesRemaining <= 0)" OnClick="NextPage">Next Page</MudButton>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid>
+            @foreach (var image in ImageResults.GetRange(imagesPrevious, imagesCurrent))
+            {
+                <MudItem Class="d-flex justify-center" xs="2">
+                    <MudImage @onclick="() => SelectImage(image)" Class="@imgCss(image)" Height="250" Width="250" Src="@image.Path"></MudImage>
+                </MudItem>
+            }
+        </MudGrid>
+
+        @if (SelectedImage is not null)
+        {
+            <MudGrid>
+                <MudItem Class="d-flex align-center justify-end mt-2" xs="1">
+                    <MudIconButton OnClick="() => CopyToClipboard(SelectedImage.Path)" Icon="@Icons.Material.Filled.ContentCopy" Color="Color.Primary"></MudIconButton>
+                </MudItem>
+                <MudItem xs="10">
+                    <MudTextField Value="@(SelectedImage.Path)"><MudIconButton OnClick="() => CopyToClipboard(SelectedImage.Path)" Icon="@Icons.Material.Filled.ContentCopy" Color="Color.Primary"></MudIconButton></MudTextField>
+                </MudItem>
+            </MudGrid>
+        }
+
+    </MudContainer>
+}
+
+@code {
+    public Query Query { get; set; } = new Query();
+    public List<Image> ImageResults { get; set; } = new List<Image>();
+    public Image? SelectedImage { get; set; }
+
+    private bool querySent;
+    private int imagesPrevious;
+    private int imagesCurrent;
+    private int imagesRemaining;
+
+    public async Task ImageQuery()
+    {
+        ImageResults.Clear();
+
+        BeginLoading("Finding Images...");
+        ImageResults = await _findImages.SendImageQuery(Query);
+        querySent = true;
+
+        if (ImageResults.Any())
+        {
+            SelectImage(ImageResults.First());
+        }
+
+        imagesCurrent = ImageResults.Count < 12 ? ImageResults.Count : 12;
+        imagesRemaining = ImageResults.Count - imagesCurrent;
+        LoadingComplete();
+    }
+
+    public void ResetQuery()
+    {
+        ImageResults.Clear();
+        Query = new Query();
+        querySent = false;
+    }
+
+    private async Task CopyToClipboard(string? text)
+    {
+        if (text is not null)
+        {
+            await _jsInterop.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        }
+    }
+
+    private void NextPage()
+    {
+        imagesPrevious += 12;
+        imagesCurrent = imagesRemaining < 12 ? imagesRemaining : 12;
+        imagesRemaining -= imagesCurrent;
+    }
+
+    private void PreviousPage()
+    {
+        imagesPrevious -= 12;
+        imagesRemaining += imagesCurrent;
+        imagesCurrent = 12;
+    }
+
+    private string imgCss(Image image) => SelectedImage == image ? "border-double border-4 mud-border-success" : "";
+
+    private void SelectImage(Image image) => SelectedImage = image;
+}
